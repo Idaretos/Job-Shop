@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 def standard_specification(filename='./JobShop/input/example.txt'):
     num_jobs = None
@@ -17,3 +18,22 @@ def standard_specification(filename='./JobShop/input/example.txt'):
             for j in range(num_machines):
                 data[i][j] = (float(line[2*j]), float(line[2*j+1]))
     return num_jobs, num_machines, data
+
+def setdata():
+    if len(sys.argv) > 3:
+        inputpath = sys.argv[1]
+        outputpath = sys.argv[2]
+        mode = sys.argv[3]
+    elif len(sys.argv) > 2:
+        inputpath = sys.argv[1]
+        outputpath = './output'
+        mode = sys.argv[2]
+    elif len(sys.argv) > 1:
+        inputpath = sys.argv[1]
+        outputpath = './output'
+        mode = 'SPT'
+    else:
+        inputpath = './JobShop/input/example.txt'
+        outputpath = './JobShop/output'
+        mode = 'SPT'
+    return inputpath, outputpath, mode

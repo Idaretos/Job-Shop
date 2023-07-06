@@ -2,18 +2,18 @@ import simpy
 
 
 class pseudo_store(object):
-    def __init__(self, env, kind, id=None, capacity=float('inf')) -> None:
+    def __init__(self, env, kind, name=None, capacity=float('inf')) -> None:
         self.env = env
         self.kind = kind
         self.store = simpy.PriorityStore(env, capacity=capacity)
-        self.id = id
+        self.name = name
 
     def put(self, job) -> None:
         priority_job = None
         if self.kind == 'SPT': # Shortest Processing Time
-            priority_job = simpy.PriorityItem(priority=job.OT_table[str(self.id)], item=job)
+            priority_job = simpy.PriorityItem(priority=job.OT_table[self.name], item=job)
         elif self.kind == 'LPT':
-            priority_job = simpy.PriorityItem(priority=-job.OT_table[str(self.id)], item=job)
+            priority_job = simpy.PriorityItem(priority=-job.OT_table[self.name], item=job)
         else: # TODO add dispatching rules
             priority_job = simpy.PriorityItem(priority=None, item=job)
         return self.store.put(priority_job)

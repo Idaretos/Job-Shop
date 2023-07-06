@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.cm import get_cmap
 from matplotlib.ticker import FuncFormatter
 
-def gantt(num_jobs, outputpath='./JobShop/output', kind='SPT'):
+def gantt(num_jobs, outputpath='./JobShop/output', mode='SPT'):
     cmap = get_cmap('viridis')
     color_list = [cmap(i / num_jobs) for i in range(num_jobs)]
     filename = outputpath + '/eventlog.csv'
@@ -29,7 +29,7 @@ def gantt(num_jobs, outputpath='./JobShop/output', kind='SPT'):
     ax.set_yticklabels(df['Machine'].unique())
     ax.yaxis.set_major_formatter(FuncFormatter(lambda x, pos: 'Machine {:0.0f}'.format(x)))
     ax.set_ylabel('Machine')
-    ax.set_title(f'Job Shop Gantt Chart ({kind})')
+    ax.set_title(f'Job Shop Gantt Chart ({mode})')
     ax.grid(axis='x')
     print('makespan:', makespan)
 
