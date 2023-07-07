@@ -14,4 +14,4 @@ if __name__ == '__main__':
     env.run(until=10000)
 
     monitor.save_event_tracer()
-    # gantt(num_jobs, outputpath, mode)
+    gantt(num_jobs, outputpath, mode)
