@@ -1,35 +1,28 @@
 #!/bin/bash
 
-# Number of iterations
-n=10
+# Check if $1 (input filename) is not provided
+if [ -z "$1" ]
+then
+  inputfile='input/orb01.txt' # Replace with your default input file
+else
+  inputfile="$1"
+fi
 
-# Array to hold time values
-declare -a time_values
+# Check if $2 (output filename) is not provided
+if [ -z "$2" ]
+then
+  outputfile='output' # Replace with your default output file
+else
+  outputfile="$2"
+fi
 
-for ((i=1; i<=n; i++))
-do
-    # Get the start timestamp
-    start_time=$(python -c 'import time; print(int(time.time() * 1000))')
+# Check if $3 (SPT value) is not provided
+if [ -z "$3" ]
+then
+  spt='SPT' # Replace with your default SPT value
+else
+  spt="$3"
+fi
 
-    # Execute the script
-    python main.py 'input/orb01.txt' 'output' 'SPT'
-
-    # Get the end timestamp
-    end_time=$(python -c 'import time; print(int(time.time() * 1000))')
-
-    # Calculate and print elapsed time
-    elapsed_time=$((end_time - start_time))
-    time_values+=($elapsed_time)
-    echo "Run $i: $elapsed_time ms"
-done
-
-# Compute the sum of time values
-sum=0
-for time in ${time_values[@]}
-do
-    sum=$((sum + time))
-done
-
-# Calculate average time and print
-average_time=$((sum / n))
-echo "Average time over $n runs: $average_time ms"
+# Execute the script
+python main.py "$inputfile" "$outputfile" "$spt"
