@@ -44,9 +44,9 @@ class Machine(object):
         while self.done < self.num_jobs:
             with self.resource.request() as req:
                 yield req
-                job = yield self.store.get()
-                job = job.item
-                operation_time = job.OT_table[self.name]
+                priorityitem = yield self.store.get()
+                job = priorityitem.item
+                operation_time = priorityitem.priority
                 self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=self.id)
                 yield self.env.timeout(operation_time)
                 self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=self.id)
