@@ -1,7 +1,8 @@
 import numpy as np
 import sys
+from os.path import realpath, dirname
 
-def standard_specification(filename='./JobShop/input/example.txt'):
+def standard_specification(filename=dirname(realpath(__file__))+'/input/example.txt'):
     num_jobs = None
     num_machines = None
 
@@ -33,7 +34,7 @@ def setdata():
         outputpath = './output'
         mode = 'SPT'
     else:
-        inputpath = './JobShop/input/example.txt'
-        outputpath = './JobShop/output'
+        inputpath = dirname(realpath(__file__))+'/input/example.txt'
+        outputpath = dirname(realpath(__file__))+'/output'
         mode = 'SPT'
     return inputpath, outputpath, mode
