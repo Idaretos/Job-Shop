@@ -25,11 +25,14 @@ The simulator can be used to model a job shop environment where multiple jobs ar
 To use this simulator, you must first provide a text file with the job data. The job data file follows `Standard Specification`, and should specify the number of jobs, the number of machines, and the machine order and operation time for each job. 
 
 Here is an example of the data file format:
+
 ```txt
 5 3
 0 3 1 2 2 4
-1 2 2 3 0 6
-...
+0 2 2 3 1 6
+1 3 0 2 2 1
+0 8 1 1 2 5
+0 7 1 2 2 9
 ```
 
 This data file specifies a job shop with 5 jobs and 3 machines. The first job's machine order is 0 -> 1 -> 2, and the operation times on these machines are 3, 2, and 4 respectively.
@@ -53,6 +56,8 @@ The simulation generates a CSV file ('JobShop/output/eventlog.csv') that logs im
 - Machine: The machine involved in the event.
 
 After running the simulation, the program generates a Gantt chart showing the operation of the job shop. The x-axis represents time, and the y-axis represents machines. Each job is represented by a colored block. The left edge of the block indicates the start time of the job, and the right edge indicates the end time. Different jobs are shown in different colors.
+
+![image not found](output/example_Gantt_Chart.png)
 
 ## Dependencies
 

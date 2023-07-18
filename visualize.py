@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.cm import get_cmap
 from matplotlib.ticker import FuncFormatter
@@ -33,8 +32,13 @@ def gantt(num_jobs, outputpath='./JobShop/output', mode='SPT'):
     ax.grid(axis='x')
     print('makespan:', makespan)
 
+    
+    plt.axvline(x=makespan, color='b', linestyle='--')
+    plt.text(makespan, 1, f'Makespan = {makespan}', color='b', ha='center', va='bottom', transform=plt.gca().get_xaxis_transform())
+    # plt.text(makespan, -0.018, f'{makespan}', color='b', ha='center', va='top', transform=plt.gca().get_xaxis_transform())
+
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
-    plt.legend(by_label.values(), by_label.keys())
+    plt.legend(by_label.values(), by_label.keys(), loc='lower right')
     plt.savefig(outputpath + '/Gantt_Chart.png')
     plt.show()

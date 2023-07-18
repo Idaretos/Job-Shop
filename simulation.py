@@ -1,7 +1,6 @@
 import simpy
 import pandas as pd
 from pseudo_store import pseudo_store
-from visualize import gantt
 
 class Job(object):
     def __init__(self, id, data, num_machines) -> None:

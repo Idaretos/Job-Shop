@@ -1,4 +1,5 @@
 from preprocessing import setdata, standard_specification
+from visualize import gantt
 from simulation import *
 
 if __name__ == '__main__':
