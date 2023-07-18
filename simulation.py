@@ -46,7 +46,7 @@ class Machine(object):
                 yield req
                 priorityitem = yield self.store.get()
                 job = priorityitem.item
-                operation_time = priorityitem.priority
+                operation_time = job.OT_table[self.name]
                 self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=self.id)
                 yield self.env.timeout(operation_time)
                 self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=self.id)

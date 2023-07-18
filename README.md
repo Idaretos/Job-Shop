@@ -25,19 +25,20 @@ The simulator can be used to model a job shop environment where multiple jobs ar
 To use this simulator, you must first provide a text file with the job data. The job data file follows `Standard Specification`, and should specify the number of jobs, the number of machines, and the machine order and operation time for each job. 
 
 Here is an example of the data file format:
-
-    5 3
-    0 3 1 2 2 4
-    1 2 2 3 0 6
-    ...
+```txt
+5 3
+0 3 1 2 2 4
+1 2 2 3 0 6
+...
+```
 
 This data file specifies a job shop with 5 jobs and 3 machines. The first job's machine order is 0 -> 1 -> 2, and the operation times on these machines are 3, 2, and 4 respectively.
 
 To run the simulator, execute the `simulation.py` file with the path to the job data file, path to save output files, dispatching rule:
-
-    python simulation.py 'path_to_job_data_file' 'path_to_save_output_files' 'dispatching rule'
-
-This will run the simulation, save the event log to 'path_to_save_output_files/eventlog.csv', and then visualize the job shop's operation as a Gantt chart.
+```bash
+python simulation.py 'input_filename' 'output_directory' 'dispatching rule'
+```
+This will run the simulation, save the event log to 'output_directory/eventlog.csv', and then visualize the job shop's operation as a Gantt chart.
 
 The `gantt()` function uses the event log to generate a Gantt chart showing when and on which machine each job was processed. The Gantt chart is displayed using matplotlib and saved as a file as 'path_to_save_output_files/Gantt_Chart.png'.
 

@@ -2,7 +2,7 @@ from preprocessing import setdata, standard_specification
 from simulation import *
 
 if __name__ == '__main__':
-    inputpath, outputpath, mode = setdata()
+    inputpath, outputpath, mode = setdata('example.txt')
     num_jobs, num_machines, data = standard_specification(inputpath)
 
     env = simpy.Environment()
