@@ -20,7 +20,7 @@ def standard_specification(filename=dirname(realpath(__file__))+'/input/example.
                 data[i][j] = (float(line[2*j]), float(line[2*j+1]))
     return num_jobs, num_machines, data
 
-def setdata(name='example.txt'):
+def set_path(name='example.txt'):
     if len(sys.argv) > 3:
         inputpath = sys.argv[1]
         outputpath = sys.argv[2]

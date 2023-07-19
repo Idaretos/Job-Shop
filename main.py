@@ -1,9 +1,9 @@
-from preprocessing import setdata, standard_specification
+from preprocessing import *
 from visualize import gantt
 from simulation import *
 
 if __name__ == '__main__':
-    inputpath, outputpath, mode = setdata('example.txt')
+    inputpath, outputpath, mode = set_path('example.txt')
     num_jobs, num_machines, data = standard_specification(inputpath)
 
     env = simpy.Environment()
