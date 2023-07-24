@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+from pseudo_store import BATCHING_RULES
 from os.path import realpath, dirname
 
 def standard_specification(filename=dirname(realpath(__file__))+'/input/example.txt'):
@@ -20,6 +21,9 @@ def standard_specification(filename=dirname(realpath(__file__))+'/input/example.
                 data[i][j] = (float(line[2*j]), float(line[2*j+1]))
     return num_jobs, num_machines, data
 
+class ModeException(Exception):
+    pass
+
 def set_path(name='example.txt'):
     if len(sys.argv) > 3:
         inputpath = sys.argv[1]
@@ -37,4 +41,6 @@ def set_path(name='example.txt'):
         inputpath = dirname(realpath(__file__))+'/input/'+name
         outputpath = dirname(realpath(__file__))+'/output'
         mode = 'SPT'
+    if mode not in BATCHING_RULES:
+        raise ModeException(f'{mode} not supported!')
     return inputpath, outputpath, mode

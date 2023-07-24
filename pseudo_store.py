@@ -1,5 +1,6 @@
 import simpy
 
+BATCHING_RULES = ['SPT', 'LPT']
 
 class pseudo_store(object):
     def __init__(self, env, kind, name=None, capacity=float('inf')) -> None:
