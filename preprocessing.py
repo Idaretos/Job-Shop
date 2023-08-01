@@ -3,7 +3,7 @@ import sys
 from pseudo_store import BATCHING_RULES
 from os.path import realpath, dirname
 
-def standard_specification(filename=dirname(realpath(__file__))+'/input/example.txt'):
+def standard_specification(filename=dirname(realpath(__file__))+'/input/example.txt') -> tuple:
     num_jobs = None
     num_machines = None
 
@@ -13,21 +13,34 @@ def standard_specification(filename=dirname(realpath(__file__))+'/input/example.
         line = file.readline().strip().split()
         num_jobs = int(line[0])
         num_machines = int(line[1])
-        parallel_machines = 1
-        if len(line) > 2:
-            parallel_machines = int(line[2])
-        data = np.empty((num_jobs, num_machines, 2))
+        parallel_machines = [1 for i in range(num_machines)]
 
+        if parallel(file, num_jobs):
+            line = file.readline().strip().split()
+            for i in range(num_machines):
+                parallel_machines[i] = int(line[i])
+
+        data = np.empty((num_jobs, num_machines, 2))
         for i in range(num_jobs):
             line = file.readline().strip().split()
             for j in range(num_machines):
                 data[i][j] = (float(line[2*j]), float(line[2*j+1]))
     return num_jobs, num_machines, data, parallel_machines
 
+def parallel(file, num_jobs) -> bool:
+    current_position = file.tell()
+    for i in range(num_jobs):
+        line = file.readline()
+    if len(file.readline().strip().split()) > 0:
+        file.seek(current_position)
+        return True
+    file.seek(current_position)
+    return False
+
 class ModeException(Exception):
     pass
 
-def set_path(name='example.txt'):
+def set_path(name='example.txt') -> tuple:
     if len(sys.argv) > 3:
         inputpath = sys.argv[1]
         outputpath = sys.argv[2]

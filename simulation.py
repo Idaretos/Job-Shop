@@ -11,15 +11,15 @@ class Job(object):
         self.process_list = [f'machine {int(self.machine_order[i])}' for i in range(num_machines)] + ['sink']
 
 class Source(object):
-    def __init__(self, env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines=1):
-        Source.create_machines(env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines)
+    def __init__(self, env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines):
+        Source.create_machines(env, monitor, model, name, num_jobs, num_machines, mode, parallel_machines)
         env.process(Source.allocate_jobs(env, model, num_jobs, num_machines, data))
 
     @staticmethod
-    def create_machines(env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines):
+    def create_machines(env, monitor, model, name, num_jobs, num_machines, mode, parallel_machines):
         monitor.record(time=env.now, job=None, process=name, event='job created')
         for i in range(num_machines):
-            model[f'machine {i}'] = Machine(env, monitor, model, i, mode, num_jobs, parallel_machines)
+            model[f'machine {i}'] = Machine(env, monitor, model, i, mode, num_jobs, parallel_machines[i])
 
     @staticmethod
     def allocate_jobs(env, model, num_jobs, num_machines, data):
@@ -31,7 +31,7 @@ class Source(object):
 
 
 class Machine(object):
-    def __init__(self, env, monitor, model, id, mode, num_jobs, parallel_machines=1) -> None:
+    def __init__(self, env, monitor, model, id, mode, num_jobs, parallel_machines) -> None:
         self.env = env
         self.monitor = monitor
         self.model = model

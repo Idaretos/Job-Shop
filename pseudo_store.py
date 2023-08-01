@@ -13,7 +13,7 @@ class pseudo_store(object):
         priority_job = None
         if self.kind == 'SPT': # Shortest Processing Time
             priority_job = simpy.PriorityItem(priority=job.OT_table[self.name], item=job)
-        elif self.kind == 'LPT':
+        elif self.kind == 'LPT': # Longest Processing Time
             priority_job = simpy.PriorityItem(priority=-job.OT_table[self.name], item=job)
         else: # TODO add dispatching rules
             priority_job = simpy.PriorityItem(priority=None, item=job)

@@ -28,6 +28,7 @@ Here is an example of the data file format:
 
 ```txt
 5 3
+2 2 1
 0 3 1 2 2 4
 0 2 2 3 1 6
 1 3 0 2 2 1
