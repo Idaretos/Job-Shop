@@ -44,19 +44,23 @@ class Machine(object):
 
     def processing(self):
         self.done = 0
-        while self.done < self.num_jobs:
-            with self.resource.request() as req:
-                yield req
-                priorityitem = yield self.store.get()
-                job = priorityitem.item
-                operation_time = job.OT_table[self.name]
-                self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=self.id)
-                yield self.env.timeout(operation_time)
-                self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=self.id)
+        while True:
+            priorityitem = yield self.store.get()
+            job = priorityitem.item
+            self.env.process(self.process_job(job))
 
-                self.env.process(self.to_next_process(job))
-                self.done += 1
-    
+    def process_job(self, job):
+        with self.resource.request() as req:
+            yield req
+            operation_time = job.OT_table[self.name]
+            self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=self.id)
+            yield self.env.timeout(operation_time)
+            self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=self.id)
+            self.env.process(self.to_next_process(job))
+            self.done += 1
+            if self.done >= self.num_jobs:
+                return
+
     def to_next_process(self, job):
         job.step += 1
         yield self.model[job.process_list[job.step]].store.put(job)
