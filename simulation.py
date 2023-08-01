@@ -11,15 +11,19 @@ class Job(object):
         self.process_list = [f'machine {int(self.machine_order[i])}' for i in range(num_machines)] + ['sink']
 
 class Source(object):
-    def __init__(self, env, monitor, model, name, num_jobs, num_machines, data, mode):
-        env.process(Source.processing(env, monitor, model, name, num_jobs, num_machines, data, mode))
+    def __init__(self, env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines=1):
+        Source.create_machines(env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines)
+        env.process(Source.allocate_jobs(env, model, num_jobs, num_machines, data))
 
     @staticmethod
-    def processing(env, monitor, model, name, num_jobs, num_machines, data, mode):
-        jobs = [Job(i, data[i], num_machines) for i in range(num_jobs)]
+    def create_machines(env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines):
         monitor.record(time=env.now, job=None, process=name, event='job created')
         for i in range(num_machines):
-            model[f'machine {i}'] = Machine(env, monitor, model, i, mode, num_jobs)
+            model[f'machine {i}'] = Machine(env, monitor, model, i, mode, num_jobs, parallel_machines)
+
+    @staticmethod
+    def allocate_jobs(env, model, num_jobs, num_machines, data):
+        jobs = [Job(i, data[i], num_machines) for i in range(num_jobs)]
         for job in jobs:
             yield model[job.process_list[job.step]].store.put(job)
         for i in range(num_machines):
@@ -27,7 +31,7 @@ class Source(object):
 
 
 class Machine(object):
-    def __init__(self, env, monitor, model, id, mode, num_jobs) -> None:
+    def __init__(self, env, monitor, model, id, mode, num_jobs, parallel_machines=1) -> None:
         self.env = env
         self.monitor = monitor
         self.model = model
@@ -35,7 +39,7 @@ class Machine(object):
         self.name = f'machine {id}'
         self.num_jobs = num_jobs
         self.done = 0
-        self.resource = simpy.Resource(env, capacity=1)
+        self.resource = simpy.Resource(env, capacity=parallel_machines)
         self.store = pseudo_store(env, mode, name=self.name)
 
     def processing(self):

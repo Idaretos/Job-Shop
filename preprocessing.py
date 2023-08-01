@@ -13,13 +13,16 @@ def standard_specification(filename=dirname(realpath(__file__))+'/input/example.
         line = file.readline().strip().split()
         num_jobs = int(line[0])
         num_machines = int(line[1])
+        parallel_machines = 1
+        if len(line) > 2:
+            parallel_machines = int(line[2])
         data = np.empty((num_jobs, num_machines, 2))
 
         for i in range(num_jobs):
             line = file.readline().strip().split()
             for j in range(num_machines):
                 data[i][j] = (float(line[2*j]), float(line[2*j+1]))
-    return num_jobs, num_machines, data
+    return num_jobs, num_machines, data, parallel_machines
 
 class ModeException(Exception):
     pass
