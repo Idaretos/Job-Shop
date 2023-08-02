@@ -39,7 +39,7 @@ class Source(object):
 
 
 class Machine(object):
-    def __init__(self, env, monitor, model, id, mode, num_jobs, parallel_machines) -> None:
+    def __init__(self, env, monitor, model, id, mode, num_jobs, parallel_capacity) -> None:
         self.env = env
         self.monitor = monitor
         self.model = model
@@ -47,42 +47,41 @@ class Machine(object):
         self.name = f'machine {id}'
         self.num_jobs = num_jobs
         self.done = 0
-        self.resource = simpy.Resource(env, capacity=parallel_machines)
+        self.resource = simpy.PriorityStore(env, capacity=parallel_capacity)
+        self.resource.put((0, self.name))
+        for i in range(2, parallel_capacity+1):
+            self.resource.put((i, f'{self.name}-{i}'))
         self.store = pseudo_store(env, mode, name=self.name)
 
     def processing(self):
         self.done = 0
         while self.done < self.num_jobs:
+            machine = yield self.resource.get()
             priorityitem = yield self.store.get()
             job = priorityitem.item
-            if self.name == 'machine 0' and (job.name == 'Job 0' or job.name == 'Job 9'):
-                pass
-            self.env.process(self.process_job(job))
+            self.env.process(self.process(machine, job))
+    
+    def process(self, machine, job):
+        operation_time = job.OT_table[self.name]
+        print(job.name, end=', ')
+        print(self.name, end=', ')
+        try:
+            self.store.print_items()
+        except Exception:
+            print('Exception')
 
-    def process_job(self, job):
-        with self.resource.request() as req:    
-            yield req
-            operation_time = job.OT_table[self.name]
-            self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=self.id)
-            
-            print(job.name, end=', ')
-            print(self.name, end=', ')
-            try:
-                self.store.print_items()
-            except Exception:
-                print('Exception')
+        self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=machine[1])
+        yield self.env.timeout(operation_time)
+        self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=machine[1])
 
-            finish_time = self.env.now + operation_time
-            self.env.process(self.to_next_process(job, finish_time))
-            yield self.env.timeout(operation_time)
-            self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=self.id)
-            self.done += 1
-
-    def to_next_process(self, job, finish_time):
-        yield self.env.timeout(finish_time-self.env.now)
+        self.env.process(self.to_next_process(machine, job))
+        self.done += 1
+    
+    def to_next_process(self, machine, job):
         job.step += 1
         next_machine = self.model[job.process_list[job.step]]
         yield self.model[job.process_list[job.step]].store.put(job)
+        self.resource.put(machine)
 
         print(job.name, end=', ')
         print(next_machine.name, end=', ')

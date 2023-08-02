@@ -20,13 +20,14 @@ def gantt(num_jobs, outputpath='./JobShop/output', mode='SPT'):
             job_name = f'Job {i}'
             times = machine_df[machine_df['Job'] == job_name]['Time'].values
             color = colors.get(job_name)
-            ax.barh(idx, width=times[1]-times[0], left=times[0], color=color, label=job_name)
-            if times[1] > makespan:
-                makespan = times[1]
+            if len(times) > 0:
+                ax.barh(idx, width=times[1]-times[0], left=times[0], color=color, label=job_name)
+                if times[1] > makespan:
+                    makespan = times[1]
     ax.set_xlabel('Time')
     ax.set_yticks(y_values)
     ax.set_yticklabels(df['Machine'].unique())
-    ax.yaxis.set_major_formatter(FuncFormatter(lambda x, pos: 'Machine {:0.0f}'.format(x)))
+    # ax.yaxis.set_major_formatter(FuncFormatter(lambda x, pos: 'Machine {:0.0f}'.format(x)))
     ax.set_ylabel('Machine')
     ax.set_title(f'Job Shop Gantt Chart ({mode})')
     ax.grid(axis='x')
