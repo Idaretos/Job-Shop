@@ -64,6 +64,14 @@ class Machine(object):
             yield req
             operation_time = job.OT_table[self.name]
             self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=self.id)
+            
+            print(job.name, end=', ')
+            print(self.name, end=', ')
+            try:
+                self.store.print_items()
+            except Exception:
+                print('Exception')
+
             finish_time = self.env.now + operation_time
             self.env.process(self.to_next_process(job, finish_time))
             yield self.env.timeout(operation_time)
@@ -73,7 +81,16 @@ class Machine(object):
     def to_next_process(self, job, finish_time):
         yield self.env.timeout(finish_time-self.env.now)
         job.step += 1
+        next_machine = self.model[job.process_list[job.step]]
         yield self.model[job.process_list[job.step]].store.put(job)
+
+        print(job.name, end=', ')
+        print(next_machine.name, end=', ')
+        try:
+            next_machine.store.print_items()
+        except Exception:
+            print('Exception')
+
 
 
 class Sink(object):

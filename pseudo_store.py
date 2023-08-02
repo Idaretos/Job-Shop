@@ -21,3 +21,9 @@ class pseudo_store(object):
 
     def get(self) -> None:
         return self.store.get()
+    
+    def print_items(self) -> None:
+        items = self.store.items
+        for item in items:
+            print(item.item.name, end=', ')
+        print()
