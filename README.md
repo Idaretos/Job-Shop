@@ -28,7 +28,7 @@ Here is an example of the data file format:
 
 ```txt
 5 3
-2 2 1
+3 1 2
 0 3 1 2 2 4
 0 2 2 3 1 6
 1 3 0 2 2 1
@@ -36,7 +36,7 @@ Here is an example of the data file format:
 0 7 1 2 2 9
 ```
 
-This data file specifies a job shop with 5 jobs and 3 machines. The first job's machine order is 0 -> 1 -> 2, and the operation times on these machines are 3, 2, and 4 respectively.
+This data file specifies a job shop with 5 jobs and 3 machines. The second line shows the number of parallel machines of each machines. The first job's machine order is 0 -> 1 -> 2, and the operation times on these machines are 3, 2, and 4 respectively.
 
 To run the simulator, execute the `simulation.py` file with the path to the job data file, path to save output files, dispatching rule:
 ```bash
