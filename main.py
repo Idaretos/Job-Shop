@@ -3,7 +3,7 @@ from visualize import gantt
 from simulation import *
 
 if __name__ == '__main__':
-    inputpath, outputpath, mode = set_path('example.txt')
+    inputpath, outputpath, mode = set_path('pinedo.txt')
     num_jobs, num_machines, data, parallel_machines = standard_specification(inputpath)
 
     env = simpy.Environment()
