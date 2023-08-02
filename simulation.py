@@ -13,7 +13,12 @@ class Job(object):
 class Source(object):
     def __init__(self, env, monitor, model, name, num_jobs, num_machines, data, mode, parallel_machines):
         Source.create_machines(env, monitor, model, name, num_jobs, num_machines, mode, parallel_machines)
-        env.process(Source.allocate_jobs(env, model, num_jobs, num_machines, data))
+        env.process(Source.run_processes(env, model, num_jobs, num_machines, data))
+
+    @staticmethod
+    def run_processes(env, model, num_jobs, num_machines, data):
+        yield env.process(Source.allocate_jobs(model, num_jobs, num_machines, data))
+        Source.run_machines(env, model, num_machines)
 
     @staticmethod
     def create_machines(env, monitor, model, name, num_jobs, num_machines, mode, parallel_machines):
@@ -22,10 +27,13 @@ class Source(object):
             model[f'machine {i}'] = Machine(env, monitor, model, i, mode, num_jobs, parallel_machines[i])
 
     @staticmethod
-    def allocate_jobs(env, model, num_jobs, num_machines, data):
+    def allocate_jobs(model, num_jobs, num_machines, data):
         jobs = [Job(i, data[i], num_machines) for i in range(num_jobs)]
         for job in jobs:
             yield model[job.process_list[job.step]].store.put(job)
+    
+    @staticmethod
+    def run_machines(env, model, num_machines):
         for i in range(num_machines):
             env.process(model[f'machine {i}'].processing())
 
@@ -44,24 +52,26 @@ class Machine(object):
 
     def processing(self):
         self.done = 0
-        while True:
+        while self.done < self.num_jobs:
             priorityitem = yield self.store.get()
             job = priorityitem.item
+            if self.name == 'machine 0' and (job.name == 'Job 0' or job.name == 'Job 9'):
+                pass
             self.env.process(self.process_job(job))
 
     def process_job(self, job):
-        with self.resource.request() as req:
+        with self.resource.request() as req:    
             yield req
             operation_time = job.OT_table[self.name]
             self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=self.id)
+            finish_time = self.env.now + operation_time
+            self.env.process(self.to_next_process(job, finish_time))
             yield self.env.timeout(operation_time)
             self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=self.id)
-            self.env.process(self.to_next_process(job))
             self.done += 1
-            if self.done >= self.num_jobs:
-                return
 
-    def to_next_process(self, job):
+    def to_next_process(self, job, finish_time):
+        yield self.env.timeout(finish_time-self.env.now)
         job.step += 1
         yield self.model[job.process_list[job.step]].store.put(job)
 
