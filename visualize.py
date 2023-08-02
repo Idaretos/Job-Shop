@@ -40,6 +40,8 @@ def gantt(num_jobs, outputpath='./JobShop/output', mode='SPT'):
 
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
-    plt.legend(by_label.values(), by_label.keys(), loc='lower right')
+    by_label = sorted(by_label.items(), key=lambda x: x[0], reverse=True)
+    sorted_labels, sorted_handles = zip(*by_label)
+    plt.legend(sorted_handles, sorted_labels, loc='lower right')
     plt.savefig(outputpath + '/Gantt_Chart.png')
     plt.show()
