@@ -63,13 +63,6 @@ class Machine(object):
     
     def process(self, machine, job):
         operation_time = job.OT_table[self.name]
-        print(job.name, end=', ')
-        print(self.name, end=', ')
-        try:
-            self.store.print_items()
-        except Exception:
-            print('Exception')
-
         self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation start', machine=machine[1])
         yield self.env.timeout(operation_time)
         self.monitor.record(time=self.env.now, job=job.name, process=self.name, event='operation finish', machine=machine[1])
@@ -79,17 +72,8 @@ class Machine(object):
     
     def to_next_process(self, machine, job):
         job.step += 1
-        next_machine = self.model[job.process_list[job.step]]
         yield self.model[job.process_list[job.step]].store.put(job)
         self.resource.put(machine)
-
-        print(job.name, end=', ')
-        print(next_machine.name, end=', ')
-        try:
-            next_machine.store.print_items()
-        except Exception:
-            print('Exception')
-
 
 
 class Sink(object):
