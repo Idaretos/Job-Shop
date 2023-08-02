@@ -57,11 +57,11 @@ class Machine(object):
         self.done = 0
         while self.done < self.num_jobs:
             machine = yield self.resource.get()
-            priorityitem = yield self.store.get()
-            job = priorityitem.item
-            self.env.process(self.process(machine, job))
+            priority_job = yield self.store.get()
+            self.env.process(self.process(machine, priority_job))
     
-    def process(self, machine, job):
+    def process(self, machine, priority_job):
+        job = priority_job[1]
         operation_time = job.OT_table[self.name]
         print(job.name, end=', ')
         print(self.name, end=', ')
