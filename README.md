@@ -58,8 +58,11 @@ The simulation generates a CSV file ('JobShop/output/eventlog.csv') that logs im
 
 After running the simulation, the program generates a Gantt chart showing the operation of the job shop. The x-axis represents time, and the y-axis represents machines. Each job is represented by a colored block. The left edge of the block indicates the start time of the job, and the right edge indicates the end time. Different jobs are shown in different colors.
 
+> with parallel machines
 ![image not found](output/example_Gantt_Chart.png)
 
+> without parallel machines
+![image not found](output/example_Gantt_Chart_woP.png)
 ## Dependencies
 
 This simulator uses the following Python libraries:
